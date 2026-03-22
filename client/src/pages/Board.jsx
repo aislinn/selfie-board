@@ -43,7 +43,7 @@ export default function Board() {
   const [linkCopied, setLinkCopied] = useState(false)
   const boardRef = useRef(null)
 
-  const { cards, addCard, moveCard, bringToFront, loadCards } = useBoard()
+  const { cards, addCard, moveCard, bringToFront, loadCards, removeCard } = useBoard()
 
   // ── PartyKit handlers ────────────────────────────────────────────────────
   const handleInit = useCallback((serverCards) => {
@@ -58,6 +58,10 @@ export default function Board() {
     moveCard(id, x, y)
   }, [moveCard])
 
+  const handleRemoteCardRemove = useCallback((id) => {
+    removeCard(id)
+  }, [removeCard])
+
   const handleCursorMove = useCallback((clientId, x, y, name) => {
     setRemoteCursors(prev => {
       const next = new Map(prev)
@@ -66,11 +70,12 @@ export default function Board() {
     })
   }, [])
 
-  const { emitCardAdd, emitCardMove, emitCursorMove } = usePartyKit({
+  const { emitCardAdd, emitCardMove, emitCardRemove, emitCursorMove } = usePartyKit({
     roomId,
     onInit: handleInit,
     onCardAdd: handleRemoteCardAdd,
     onCardMove: handleRemoteCardMove,
+    onCardRemove: handleRemoteCardRemove,
     onCursorMove: handleCursorMove,
   })
 
@@ -123,6 +128,11 @@ export default function Board() {
     bringToFront(id)
   }, [bringToFront])
 
+  const handleCardDelete = useCallback((id) => {
+    removeCard(id)
+    emitCardRemove(id)
+  }, [removeCard, emitCardRemove])
+
   // ── Cursor broadcast ─────────────────────────────────────────────────────
   const handleCursorBroadcast = useCallback((x, y) => {
     emitCursorMove(x, y, userName)
@@ -144,8 +154,10 @@ export default function Board() {
       <BoardCanvas
         cards={cards}
         remoteCursors={remoteCursors}
+        userName={userName}
         onCardDragEnd={handleCardDragEnd}
         onCardFocus={handleCardFocus}
+        onCardDelete={handleCardDelete}
         onCursorMove={handleCursorBroadcast}
       />
 

@@ -1,14 +1,14 @@
 import { useRef, useCallback } from 'react'
 
 /**
- * A draggable polaroid-style card matching the Figma design.
- *
  * Props:
  *   card        – { id, image_url, x, y, rotation, name, created_at, zIndex }
+ *   isOwn       – true if this card was added by the current user
  *   onDragEnd   – (id, x, y) called when drag completes
  *   onFocus     – (id) called when card is tapped/clicked
+ *   onDelete    – (id) called when user taps the × button
  */
-export default function PhotoCard({ card, onDragEnd, onFocus }) {
+export default function PhotoCard({ card, isOwn, onDragEnd, onFocus, onDelete }) {
   const { id, image_url, x, y, rotation, name, created_at, zIndex } = card
   const dragState = useRef(null)
 
@@ -50,12 +50,17 @@ export default function PhotoCard({ card, onDragEnd, onFocus }) {
     }
   }, [id, onDragEnd])
 
+  function handleDelete(e) {
+    e.stopPropagation()
+    onDelete(id)
+  }
+
   return (
     <div
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
-      className="absolute select-none cursor-grab active:cursor-grabbing"
+      className="absolute select-none cursor-grab active:cursor-grabbing group"
       style={{
         left: x,
         top: y,
@@ -65,7 +70,22 @@ export default function PhotoCard({ card, onDragEnd, onFocus }) {
         willChange: 'transform',
       }}
     >
-      {/* Polaroid card — matches Figma exactly */}
+      {/* Delete button — only visible on own cards */}
+      {isOwn && (
+        <button
+          onPointerDown={handleDelete}
+          className="absolute -top-3 -right-3 z-10 w-7 h-7 rounded-full bg-gray-900 text-white text-sm flex items-center justify-center shadow-md
+                     opacity-0 group-hover:opacity-100 focus:opacity-100
+                     active:scale-90 transition-all"
+          style={{ touchAction: 'none', lineHeight: 1 }}
+          title="Remove photo"
+          aria-label="Remove photo"
+        >
+          ×
+        </button>
+      )}
+
+      {/* Polaroid card */}
       <div
         style={{
           background: 'white',
@@ -111,7 +131,6 @@ export default function PhotoCard({ card, onDragEnd, onFocus }) {
             draggable={false}
             style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
           />
-          {/* Inset shadow overlay */}
           <div
             style={{
               position: 'absolute',

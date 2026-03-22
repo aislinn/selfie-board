@@ -51,5 +51,14 @@ export function useBoard() {
     setMaxZ(max)
   }, [])
 
-  return { cards, addCard, moveCard, bringToFront, loadCards }
+  const removeCard = useCallback((id) => {
+    setCards(prev => {
+      if (!prev.has(id)) return prev
+      const next = new Map(prev)
+      next.delete(id)
+      return next
+    })
+  }, [])
+
+  return { cards, addCard, moveCard, bringToFront, loadCards, removeCard }
 }

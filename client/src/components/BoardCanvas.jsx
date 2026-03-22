@@ -18,11 +18,13 @@ function throttle(fn, ms) {
  * Props:
  *   cards         – Map<id, card>
  *   remoteCursors – Map<clientId, { x, y, name }>
+ *   userName      – current user's name (used to determine card ownership)
  *   onCardDragEnd – (id, x, y)
  *   onCardFocus   – (id)
+ *   onCardDelete  – (id)
  *   onCursorMove  – (x, y)  — throttled, called on pointermove
  */
-export default function BoardCanvas({ cards, remoteCursors, onCardDragEnd, onCardFocus, onCursorMove }) {
+export default function BoardCanvas({ cards, remoteCursors, userName, onCardDragEnd, onCardFocus, onCardDelete, onCursorMove }) {
   const canvasRef = useRef(null)
 
   // Throttled cursor emit (~30fps)
@@ -46,8 +48,10 @@ export default function BoardCanvas({ cards, remoteCursors, onCardDragEnd, onCar
         <PhotoCard
           key={card.id}
           card={card}
+          isOwn={!!userName && card.name === userName}
           onDragEnd={onCardDragEnd}
           onFocus={onCardFocus}
+          onDelete={onCardDelete}
         />
       ))}
 

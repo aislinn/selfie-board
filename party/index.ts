@@ -16,6 +16,7 @@ interface Card {
 type IncomingMessage =
   | { type: 'card:add'; card: Card }
   | { type: 'card:move'; id: string; x: number; y: number }
+  | { type: 'card:remove'; id: string }
   | { type: 'cursor:move'; x: number; y: number; name: string | null }
 
 // ── Supabase REST helpers ────────────────────────────────────────────────────
@@ -62,6 +63,13 @@ async function updateCardPosition(supabaseUrl: string, serviceKey: string, id: s
   await dbFetch(supabaseUrl, serviceKey, `/cards?id=eq.${encodeURIComponent(id)}`, {
     method: 'PATCH',
     body: JSON.stringify({ x, y }),
+  })
+}
+
+async function deleteCard(supabaseUrl: string, serviceKey: string, id: string): Promise<void> {
+  if (!supabaseUrl || !serviceKey) return
+  await dbFetch(supabaseUrl, serviceKey, `/cards?id=eq.${encodeURIComponent(id)}`, {
+    method: 'DELETE',
   })
 }
 
@@ -132,6 +140,13 @@ export default class SelfieBoard implements Party.Server {
         }
         updateCardPosition(this.supabaseUrl, this.serviceKey, msg.id, msg.x, msg.y).catch(console.error)
         this.room.broadcast(JSON.stringify({ type: 'card:move', id: msg.id, x: msg.x, y: msg.y }), [sender.id])
+        break
+      }
+
+      case 'card:remove': {
+        this.cards = this.cards.filter(c => c.id !== msg.id)
+        deleteCard(this.supabaseUrl, this.serviceKey, msg.id).catch(console.error)
+        this.room.broadcast(JSON.stringify({ type: 'card:remove', id: msg.id }), [sender.id])
         break
       }
 
