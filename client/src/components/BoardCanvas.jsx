@@ -182,9 +182,7 @@ export default function BoardCanvas({
       onPointerCancel={handlePointerUp}
       className="relative w-full h-full overflow-hidden"
       style={{
-        background: 'radial-gradient(circle, #d1d5db 1px, transparent 1px)',
-        backgroundSize: '28px 28px',
-        backgroundColor: '#f9fafb',
+        backgroundColor: '#e5e7eb',
         touchAction: 'none',
         cursor: 'grab',
       }}
@@ -201,6 +199,9 @@ export default function BoardCanvas({
           willChange: 'transform',
           touchAction: 'none',
           transformOrigin: '0 0',
+          background: 'radial-gradient(circle, #d1d5db 1px, transparent 1px)',
+          backgroundSize: '28px 28px',
+          backgroundColor: '#f9fafb',
         }}
       >
         {[...cards.values()].map(card => (
