@@ -8,6 +8,8 @@ import { useRef, useCallback } from 'react'
  *   onFocus     – (id) called when card is tapped/clicked
  *   onDelete    – (id) called when user taps the × button
  */
+const isTouchDevice = window.matchMedia('(hover: none)').matches
+
 export default function PhotoCard({ card, isOwn, onDragEnd, onFocus, onDelete, zoomRef, isPinchingRef }) {
   const { id, image_url, x, y, rotation, name, created_at, zIndex } = card
   const dragState = useRef(null)
@@ -78,9 +80,8 @@ export default function PhotoCard({ card, isOwn, onDragEnd, onFocus, onDelete, z
       {isOwn && (
         <button
           onPointerDown={handleDelete}
-          className="absolute -top-3 -right-3 z-10 w-7 h-7 rounded-full bg-gray-900 text-white text-sm flex items-center justify-center shadow-md
-                     opacity-0 group-hover:opacity-100 focus:opacity-100
-                     active:scale-90 transition-all"
+          className={`absolute -top-3 -right-3 z-10 w-7 h-7 rounded-full bg-gray-900 text-white text-sm flex items-center justify-center shadow-md active:scale-90 transition-all
+                     ${isTouchDevice ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 focus:opacity-100'}`}
           style={{ touchAction: 'none', lineHeight: 1 }}
           title="Remove photo"
           aria-label="Remove photo"
