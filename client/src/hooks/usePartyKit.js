@@ -49,10 +49,8 @@ export function usePartyKit({ roomId, onCardAdd, onCardMove, onCardRemove, onCur
   }, [roomId])
 
   const send = useCallback((msg) => {
-    const ws = socketRef.current
-    if (ws && ws.readyState === WebSocket.OPEN) {
-      ws.send(JSON.stringify(msg))
-    }
+    // PartySocket buffers sends during reconnection — no readyState check needed
+    socketRef.current?.send(JSON.stringify(msg))
   }, [])
 
   const emitCardAdd = useCallback((card) => {

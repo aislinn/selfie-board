@@ -68,9 +68,13 @@ async function updateCardPosition(supabaseUrl: string, serviceKey: string, id: s
 
 async function deleteCard(supabaseUrl: string, serviceKey: string, id: string): Promise<void> {
   if (!supabaseUrl || !serviceKey) return
-  await dbFetch(supabaseUrl, serviceKey, `/cards?id=eq.${encodeURIComponent(id)}`, {
+  const res = await dbFetch(supabaseUrl, serviceKey, `/cards?id=eq.${encodeURIComponent(id)}`, {
     method: 'DELETE',
   })
+  if (!res.ok) {
+    const body = await res.text().catch(() => '')
+    throw new Error(`deleteCard failed ${res.status}: ${body}`)
+  }
 }
 
 // ── PartyKit Server ──────────────────────────────────────────────────────────
