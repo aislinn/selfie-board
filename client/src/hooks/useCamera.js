@@ -55,20 +55,25 @@ export function useCamera() {
     const video = videoRef.current
     if (!video) return null
 
+    // Crop to a square from the center of the video frame
+    const size = Math.min(video.videoWidth, video.videoHeight)
+    const sx = (video.videoWidth - size) / 2
+    const sy = (video.videoHeight - size) / 2
+
+    const maxDim = 1080
+    const dim = Math.min(size, maxDim)
     const canvas = document.createElement('canvas')
-    const maxDim = 1280
-    const ratio = Math.min(maxDim / video.videoWidth, maxDim / video.videoHeight, 1)
-    canvas.width = Math.round(video.videoWidth * ratio)
-    canvas.height = Math.round(video.videoHeight * ratio)
+    canvas.width = dim
+    canvas.height = dim
 
     const ctx = canvas.getContext('2d')
 
     // Mirror the image when using front camera so it looks natural
     if (facingMode === 'user') {
-      ctx.translate(canvas.width, 0)
+      ctx.translate(dim, 0)
       ctx.scale(-1, 1)
     }
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+    ctx.drawImage(video, sx, sy, size, size, 0, 0, dim, dim)
 
     return canvas.toDataURL('image/jpeg', quality)
   }, [facingMode])

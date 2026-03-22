@@ -1,9 +1,10 @@
-import { useState, useCallback, useEffect, useRef } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid'
 
 import BoardCanvas from '../components/BoardCanvas'
 import CameraModal from '../components/CameraModal'
+import NameModal from '../components/NameModal'
 import Toolbar from '../components/Toolbar'
 
 import { useBoard } from '../hooks/useBoard'
@@ -12,8 +13,15 @@ import { uploadImage } from '../lib/supabase'
 
 const NAME_KEY = 'selfie-board:name'
 
+function safeLocalStorage(key) {
+  try { return localStorage.getItem(key) ?? '' } catch { return '' }
+}
+function safeLocalStorageSet(key, value) {
+  try { localStorage.setItem(key, value) } catch { /* ignore */ }
+}
+
 function getRandomRotation() {
-  return (Math.random() - 0.5) * 14 // -7° to +7°
+  return (Math.random() - 0.5) * 14
 }
 
 function randomPlacement(boardEl) {
@@ -28,9 +36,11 @@ function randomPlacement(boardEl) {
 export default function Board() {
   const { roomId } = useParams()
   const [cameraOpen, setCameraOpen] = useState(false)
-  const [userName, setUserName] = useState(() => localStorage.getItem(NAME_KEY) ?? '')
+  const [userName, setUserName] = useState(() => safeLocalStorage(NAME_KEY))
+  const [nameModalOpen, setNameModalOpen] = useState(() => !safeLocalStorage(NAME_KEY))
   const [uploading, setUploading] = useState(false)
   const [remoteCursors, setRemoteCursors] = useState(new Map())
+  const [linkCopied, setLinkCopied] = useState(false)
   const boardRef = useRef(null)
 
   const { cards, addCard, moveCard, bringToFront, loadCards } = useBoard()
@@ -64,25 +74,11 @@ export default function Board() {
     onCursorMove: handleCursorMove,
   })
 
-  // ── Name prompt on first visit ───────────────────────────────────────────
-  useEffect(() => {
-    if (!userName) {
-      const name = prompt('What\'s your name? (shown on your selfies)') ?? ''
-      if (name.trim()) {
-        const trimmed = name.trim()
-        setUserName(trimmed)
-        localStorage.setItem(NAME_KEY, trimmed)
-      }
-    }
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
-
-  function handleNameEdit() {
-    const name = prompt('Enter your name:', userName) ?? ''
-    if (name.trim()) {
-      const trimmed = name.trim()
-      setUserName(trimmed)
-      localStorage.setItem(NAME_KEY, trimmed)
-    }
+  // ── Name handling ────────────────────────────────────────────────────────
+  function saveName(name) {
+    setUserName(name)
+    safeLocalStorageSet(NAME_KEY, name)
+    setNameModalOpen(false)
   }
 
   // ── Camera capture → upload → add card ──────────────────────────────────
@@ -92,12 +88,9 @@ export default function Board() {
     try {
       const cardId = uuidv4()
       let imageUrl
-
       try {
         imageUrl = await uploadImage(dataUrl, cardId)
       } catch {
-        // Supabase not configured — fall back to local data URL so the app
-        // still works without a backend during development.
         console.warn('Supabase upload failed, using local data URL (dev fallback)')
         imageUrl = dataUrl
       }
@@ -126,7 +119,6 @@ export default function Board() {
     emitCardMove(id, x, y)
   }, [moveCard, emitCardMove])
 
-  // ── Focus (bring to front) ───────────────────────────────────────────────
   const handleCardFocus = useCallback((id) => {
     bringToFront(id)
   }, [bringToFront])
@@ -135,6 +127,17 @@ export default function Board() {
   const handleCursorBroadcast = useCallback((x, y) => {
     emitCursorMove(x, y, userName)
   }, [emitCursorMove, userName])
+
+  // ── Copy link ─────────────────────────────────────────────────────────────
+  async function handleCopyLink() {
+    try {
+      await navigator.clipboard.writeText(window.location.href)
+    } catch {
+      // clipboard not available, silently ignore
+    }
+    setLinkCopied(true)
+    setTimeout(() => setLinkCopied(false), 2000)
+  }
 
   return (
     <div ref={boardRef} className="relative w-full h-full overflow-hidden">
@@ -150,13 +153,30 @@ export default function Board() {
         roomId={roomId}
         userName={userName}
         onCameraOpen={() => setCameraOpen(true)}
-        onNameEdit={handleNameEdit}
+        onNameEdit={() => setNameModalOpen(true)}
+        onCopyLink={handleCopyLink}
       />
 
+      {/* Upload indicator */}
       {uploading && (
         <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 bg-white/90 backdrop-blur-sm text-sm text-gray-700 px-4 py-2 rounded-xl shadow-lg border border-gray-100">
           Uploading photo…
         </div>
+      )}
+
+      {/* Link copied toast */}
+      {linkCopied && (
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 bg-gray-900 text-white text-sm px-4 py-2 rounded-xl shadow-lg">
+          Link copied!
+        </div>
+      )}
+
+      {nameModalOpen && (
+        <NameModal
+          initial={userName}
+          onConfirm={saveName}
+          onSkip={() => setNameModalOpen(false)}
+        />
       )}
 
       {cameraOpen && (

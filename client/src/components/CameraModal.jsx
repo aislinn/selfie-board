@@ -57,8 +57,8 @@ export default function CameraModal({ onCapture, onClose }) {
           </button>
         </div>
 
-        {/* Video / preview area */}
-        <div className="relative bg-black aspect-[3/4] w-full overflow-hidden">
+        {/* Video / preview area — square to match captured photo */}
+        <div className="relative bg-black aspect-square w-full overflow-hidden">
           {!preview ? (
             <>
               <video
