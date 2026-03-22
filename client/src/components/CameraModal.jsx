@@ -56,7 +56,7 @@ export default function CameraModal({ onCapture, onClose }) {
   return (
     <div
       className="fixed inset-0 z-50 sm:flex sm:items-center sm:justify-center"
-      style={{ background: 'rgba(35,40,54,0)' }}
+      style={{ background: 'rgba(35,40,54,0)', touchAction: 'pan-x pan-y' }}
       onPointerDown={handleBackdrop}
     >
       {/* Desktop backdrop */}

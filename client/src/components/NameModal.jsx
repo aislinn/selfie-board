@@ -72,7 +72,7 @@ export default function NameModal({ initial = '', onConfirm, onSkip }) {
             value={value}
             onChange={e => setValue(e.target.value)}
             placeholder="Your name"
-            maxLength={40}
+            maxLength={20}
             style={{
               width: '100%',
               height: 44,
