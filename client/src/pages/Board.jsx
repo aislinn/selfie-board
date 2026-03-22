@@ -24,12 +24,12 @@ function getRandomRotation() {
   return (Math.random() - 0.5) * 14
 }
 
-function randomPlacement(boardEl) {
+function randomPlacement(boardEl, panOffset = { x: 0, y: 0 }) {
   if (!boardEl) return { x: 100, y: 100 }
   const { clientWidth: w, clientHeight: h } = boardEl
   return {
-    x: 80 + Math.random() * Math.max(0, w - 260),
-    y: 80 + Math.random() * Math.max(0, h - 300),
+    x: -panOffset.x + 80 + Math.random() * Math.max(0, w - 260),
+    y: -panOffset.y + 80 + Math.random() * Math.max(0, h - 300),
   }
 }
 
@@ -42,6 +42,7 @@ export default function Board() {
   const [remoteCursors, setRemoteCursors] = useState(new Map())
   const [linkCopied, setLinkCopied] = useState(false)
   const boardRef = useRef(null)
+  const panOffsetRef = useRef({ x: 0, y: 0 })
 
   const { cards, addCard, moveCard, bringToFront, loadCards, removeCard } = useBoard()
 
@@ -100,7 +101,7 @@ export default function Board() {
         imageUrl = dataUrl
       }
 
-      const { x, y } = randomPlacement(boardRef.current)
+      const { x, y } = randomPlacement(boardRef.current, panOffsetRef.current)
       const card = {
         id: cardId,
         image_url: imageUrl,
@@ -159,6 +160,7 @@ export default function Board() {
         onCardFocus={handleCardFocus}
         onCardDelete={handleCardDelete}
         onCursorMove={handleCursorBroadcast}
+        panRef={panOffsetRef}
       />
 
       <Toolbar

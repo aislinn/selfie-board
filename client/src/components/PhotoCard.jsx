@@ -17,6 +17,7 @@ export default function PhotoCard({ card, isOwn, onDragEnd, onFocus, onDelete })
   })
 
   const handlePointerDown = useCallback((e) => {
+    e.stopPropagation()
     e.currentTarget.setPointerCapture(e.pointerId)
     onFocus(id)
     dragState.current = {
