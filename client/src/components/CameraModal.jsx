@@ -58,8 +58,9 @@ export default function CameraModal({ onCapture, onClose }) {
       <div
         className="relative flex flex-col w-full h-full sm:h-auto sm:max-w-sm sm:rounded-2xl overflow-hidden"
         style={{
-          background: '#171B25',
+          background: '#1A1F2B',
           border: '1px solid rgba(255,255,255,0.08)',
+          borderBottom: 'none',
           boxShadow: '0 -4px 60px rgba(0,0,0,0.6)',
         }}
       >
