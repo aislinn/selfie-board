@@ -24,11 +24,11 @@ function getRandomRotation() {
   return (Math.random() - 0.5) * 14
 }
 
-function randomPlacement(boardEl, { x: panX = 0, y: panY = 0, zoom = 1 } = {}) {
+function randomPlacement(boardEl, { x: panX = 0, y: panY = 0, zoom = 1 } = {}, center = false) {
   if (!boardEl) return { x: 100, y: 100 }
   const { clientWidth: w, clientHeight: h } = boardEl
-  const screenX = 80 + Math.random() * Math.max(0, w - 260)
-  const screenY = 80 + Math.random() * Math.max(0, h - 300)
+  const screenX = center ? w / 2 - 110 : 80 + Math.random() * Math.max(0, w - 260)
+  const screenY = center ? h / 2 - 156 : 80 + Math.random() * Math.max(0, h - 300)
   return {
     x: (screenX - panX) / zoom,
     y: (screenY - panY) / zoom,
@@ -103,7 +103,7 @@ export default function Board() {
         imageUrl = dataUrl
       }
 
-      const { x, y } = randomPlacement(boardRef.current, panOffsetRef.current)
+      const { x, y } = randomPlacement(boardRef.current, panOffsetRef.current, cards.size === 0)
       const card = {
         id: cardId,
         image_url: imageUrl,
