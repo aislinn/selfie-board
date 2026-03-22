@@ -39,11 +39,12 @@ export default function BoardCanvas({
   const zoomRef = useRef(1)  // shared with PhotoCard so card drag scales correctly
   const isPinchingRef = useRef(false)  // shared with PhotoCard to block card drag during pinch
 
-  // Centre the canvas on first render
+  // Centre the canvas on first render; zoom out on touch devices
   useEffect(() => {
     const el = outerRef.current
     if (!el) return
-    applyTransform((el.clientWidth - CANVAS_SIZE) / 2, (el.clientHeight - CANVAS_SIZE) / 2, 1)
+    const z = window.matchMedia('(hover: none)').matches ? 0.75 : 1
+    applyTransform((el.clientWidth - CANVAS_SIZE * z) / 2, (el.clientHeight - CANVAS_SIZE * z) / 2, z)
   }, [])
 
   // Track total active pointers on the page (including those captured by cards)
