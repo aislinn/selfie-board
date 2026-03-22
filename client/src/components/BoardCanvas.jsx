@@ -86,9 +86,9 @@ export default function BoardCanvas({
     const vw = el ? el.clientWidth  : 800
     const vh = el ? el.clientHeight : 600
     const cs = CANVAS_SIZE * z
-    const edge = 80
-    const x = Math.max(edge - cs, Math.min(vw - edge, rawX))
-    const y = Math.max(edge - cs, Math.min(vh - edge, rawY))
+    // Canvas must always cover the full viewport — no peeking behind it
+    const x = Math.max(vw - cs, Math.min(0, rawX))
+    const y = Math.max(vh - cs, Math.min(0, rawY))
 
     currentPan.current = { x, y }
     currentZoom.current = z
@@ -191,7 +191,7 @@ export default function BoardCanvas({
       onPointerCancel={handlePointerUp}
       className="relative w-full h-full overflow-hidden"
       style={{
-        backgroundColor: '#e5e7eb',
+        backgroundColor: '#f9fafb',
         touchAction: 'none',
         cursor: 'grab',
       }}
