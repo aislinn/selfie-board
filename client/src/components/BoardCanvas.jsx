@@ -80,7 +80,16 @@ export default function BoardCanvas({
     throttle((x, y) => onCursorMove?.(x, y), 33)
   ).current
 
-  function applyTransform(x, y, z) {
+  function applyTransform(rawX, rawY, z) {
+    // Clamp pan so the canvas is always at least 80px visible on each side
+    const el = outerRef.current
+    const vw = el ? el.clientWidth  : 800
+    const vh = el ? el.clientHeight : 600
+    const cs = CANVAS_SIZE * z
+    const edge = 80
+    const x = Math.max(edge - cs, Math.min(vw - edge, rawX))
+    const y = Math.max(edge - cs, Math.min(vh - edge, rawY))
+
     currentPan.current = { x, y }
     currentZoom.current = z
     zoomRef.current = z
@@ -199,6 +208,7 @@ export default function BoardCanvas({
           willChange: 'transform',
           touchAction: 'none',
           transformOrigin: '0 0',
+          overflow: 'hidden',
           background: 'radial-gradient(circle, #d1d5db 1px, transparent 1px)',
           backgroundSize: '28px 28px',
           backgroundColor: '#f9fafb',
