@@ -6,7 +6,8 @@
     "dev:client": "cd client && npm run dev",
     "dev:party": "npx partykit dev",
     "build": "cd client && npm run build",
-    "deploy:party": "npx partykit deploy"
+    "deploy:party": "npx partykit deploy",
+    "deploy": "git checkout production && git merge main --no-edit && git push && git checkout main"
   },
   "devDependencies": {
     "concurrently": "^9.0.0",
