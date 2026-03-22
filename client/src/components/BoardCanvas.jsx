@@ -42,13 +42,14 @@ export default function BoardCanvas({
     let count = 0
     const onDown = () => { count++; if (count >= 2) isPinchingRef.current = true }
     const onUp   = () => { count = Math.max(0, count - 1); if (count < 2) isPinchingRef.current = false }
-    document.addEventListener('pointerdown',   onDown)
-    document.addEventListener('pointerup',     onUp)
-    document.addEventListener('pointercancel', onUp)
+    // capture:true so stopPropagation in child elements doesn't block our counter
+    document.addEventListener('pointerdown',   onDown, { capture: true })
+    document.addEventListener('pointerup',     onUp,   { capture: true })
+    document.addEventListener('pointercancel', onUp,   { capture: true })
     return () => {
-      document.removeEventListener('pointerdown',   onDown)
-      document.removeEventListener('pointerup',     onUp)
-      document.removeEventListener('pointercancel', onUp)
+      document.removeEventListener('pointerdown',   onDown, { capture: true })
+      document.removeEventListener('pointerup',     onUp,   { capture: true })
+      document.removeEventListener('pointercancel', onUp,   { capture: true })
     }
   }, [])
 
