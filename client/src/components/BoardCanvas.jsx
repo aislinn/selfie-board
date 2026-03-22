@@ -12,6 +12,7 @@ function throttle(fn, ms) {
 
 const MIN_ZOOM = 0.25
 const MAX_ZOOM = 4
+const CANVAS_SIZE = 5000  // fixed canvas square in px
 
 /**
  * Props:
@@ -29,6 +30,7 @@ export default function BoardCanvas({
   onCardDragEnd, onCardFocus, onCardDelete, onCursorMove,
   panRef,
 }) {
+  const outerRef = useRef(null)
   const innerRef = useRef(null)
   const activePointers = useRef(new Map())  // pointerId → { x, y }
   const panState = useRef(null)
@@ -51,6 +53,27 @@ export default function BoardCanvas({
       document.removeEventListener('pointerup',     onUp,   { capture: true })
       document.removeEventListener('pointercancel', onUp,   { capture: true })
     }
+  }, [])
+
+  // Trackpad pinch-to-zoom via wheel events (passive:false required for preventDefault)
+  useEffect(() => {
+    const el = outerRef.current
+    if (!el) return
+    const onWheel = (e) => {
+      if (!e.ctrlKey && !e.metaKey) return
+      e.preventDefault()
+      const factor = Math.pow(1.001, -e.deltaY)
+      const newZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, currentZoom.current * factor))
+      const f = newZoom / currentZoom.current
+      const { x: px, y: py } = currentPan.current
+      applyTransform(
+        px * f + e.clientX * (1 - f),
+        py * f + e.clientY * (1 - f),
+        newZoom,
+      )
+    }
+    el.addEventListener('wheel', onWheel, { passive: false })
+    return () => el.removeEventListener('wheel', onWheel, { passive: false })
   }, [])
 
   const throttledCursorMove = useRef(
@@ -152,6 +175,7 @@ export default function BoardCanvas({
 
   return (
     <div
+      ref={outerRef}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
@@ -170,7 +194,10 @@ export default function BoardCanvas({
         ref={innerRef}
         style={{
           position: 'absolute',
-          inset: 0,
+          top: 0,
+          left: 0,
+          width: CANVAS_SIZE,
+          height: CANVAS_SIZE,
           willChange: 'transform',
           touchAction: 'none',
           transformOrigin: '0 0',
