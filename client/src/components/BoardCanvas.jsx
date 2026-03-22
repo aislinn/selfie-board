@@ -60,17 +60,19 @@ export default function BoardCanvas({
     const el = outerRef.current
     if (!el) return
     const onWheel = (e) => {
-      if (!e.ctrlKey && !e.metaKey) return
       e.preventDefault()
-      const factor = Math.pow(1.01, -e.deltaY)
-      const newZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, currentZoom.current * factor))
-      const f = newZoom / currentZoom.current
-      const { x: px, y: py } = currentPan.current
-      applyTransform(
-        px * f + e.clientX * (1 - f),
-        py * f + e.clientY * (1 - f),
-        newZoom,
-      )
+      if (e.ctrlKey || e.metaKey) {
+        // Trackpad pinch or Ctrl+scroll → zoom
+        const factor = Math.pow(1.01, -e.deltaY)
+        const newZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, currentZoom.current * factor))
+        const f = newZoom / currentZoom.current
+        const { x: px, y: py } = currentPan.current
+        applyTransform(px * f + e.clientX * (1 - f), py * f + e.clientY * (1 - f), newZoom)
+      } else {
+        // Two-finger trackpad scroll → pan
+        const { x: px, y: py } = currentPan.current
+        applyTransform(px - e.deltaX, py - e.deltaY, currentZoom.current)
+      }
     }
     el.addEventListener('wheel', onWheel, { passive: false })
     return () => el.removeEventListener('wheel', onWheel, { passive: false })
