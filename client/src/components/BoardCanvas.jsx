@@ -62,7 +62,7 @@ export default function BoardCanvas({
     const onWheel = (e) => {
       if (!e.ctrlKey && !e.metaKey) return
       e.preventDefault()
-      const factor = Math.pow(1.001, -e.deltaY)
+      const factor = Math.pow(1.01, -e.deltaY)
       const newZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, currentZoom.current * factor))
       const f = newZoom / currentZoom.current
       const { x: px, y: py } = currentPan.current
