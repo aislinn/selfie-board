@@ -10,7 +10,7 @@ import { useRef, useCallback } from 'react'
  */
 const isTouchDevice = window.matchMedia('(hover: none)').matches
 
-export default function PhotoCard({ card, isOwn, onDragEnd, onFocus, onDelete, zoomRef, isPinchingRef }) {
+export default function PhotoCard({ card, isOwn, onDragEnd, onFocus, onDelete, zoomRef, isPinchingRef, isStamping, onStamp }) {
   const { id, image_url, x, y, rotation, name, created_at, zIndex } = card
   const dragState = useRef(null)
 
@@ -21,6 +21,10 @@ export default function PhotoCard({ card, isOwn, onDragEnd, onFocus, onDelete, z
 
   const handlePointerDown = useCallback((e) => {
     e.stopPropagation()
+    if (isStamping) {
+      onStamp?.(e.clientX, e.clientY)
+      return
+    }
     e.currentTarget.setPointerCapture(e.pointerId)
     onFocus(id)
     dragState.current = {
@@ -30,7 +34,7 @@ export default function PhotoCard({ card, isOwn, onDragEnd, onFocus, onDelete, z
       startCardY: y,
       moved: false,
     }
-  }, [id, x, y, onFocus])
+  }, [id, x, y, onFocus, isStamping, onStamp])
 
   const handlePointerMove = useCallback((e) => {
     const ds = dragState.current
@@ -67,7 +71,7 @@ export default function PhotoCard({ card, isOwn, onDragEnd, onFocus, onDelete, z
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
-      className="absolute select-none cursor-grab active:cursor-grabbing group"
+      className={`absolute select-none group ${isStamping ? '' : 'cursor-grab active:cursor-grabbing'}`}
       style={{
         left: x,
         top: y,
@@ -75,6 +79,7 @@ export default function PhotoCard({ card, isOwn, onDragEnd, onFocus, onDelete, z
         transform: `rotate(${rotation}deg)`,
         touchAction: 'none',
         willChange: 'transform',
+        cursor: isStamping ? 'crosshair' : undefined,
       }}
     >
       {/* Delete button — only visible on own cards */}

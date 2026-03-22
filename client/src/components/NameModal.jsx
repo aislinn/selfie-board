@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 /**
  * Props:
@@ -8,27 +8,54 @@ import { useState } from 'react'
  */
 export default function NameModal({ initial = '', onConfirm, onSkip }) {
   const [value, setValue] = useState(initial)
+  const [visible, setVisible] = useState(false)
+
+  // Trigger enter animation on mount
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => setVisible(true))
+    return () => cancelAnimationFrame(raf)
+  }, [])
+
+  function dismiss(cb) {
+    setVisible(false)
+    setTimeout(cb, 220)
+  }
 
   function handleSubmit(e) {
     e.preventDefault()
     const trimmed = value.trim()
-    if (trimmed) onConfirm(trimmed)
-    else onSkip?.()
+    if (trimmed) dismiss(() => onConfirm(trimmed))
+    else dismiss(() => onSkip?.())
+  }
+
+  function handleBackdrop() {
+    dismiss(() => onSkip?.())
+  }
+
+  const backdropStyle = {
+    background: 'rgba(35, 40, 54, 0.85)',
+    opacity: visible ? 1 : 0,
+    transition: 'opacity 0.2s ease',
+  }
+
+  const sheetStyle = {
+    background: '#1c2030',
+    borderRadius: 24,
+    padding: '28px 24px 24px',
+    boxShadow: '0 -4px 60px rgba(0,0,0,0.5)',
+    border: '1px solid rgba(255,255,255,0.08)',
+    opacity: visible ? 1 : 0,
+    transform: visible ? 'translateY(0) scale(1)' : 'translateY(16px) scale(0.97)',
+    transition: 'opacity 0.22s ease, transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1)',
   }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
-      <div className="absolute inset-0 backdrop-blur-sm" style={{ background: 'rgba(35, 40, 54, 0.85)' }} onPointerDown={onSkip} />
+      <div className="absolute inset-0 backdrop-blur-sm" style={backdropStyle} onPointerDown={handleBackdrop} />
 
       {/* Sheet */}
-      <div className="relative w-full max-w-sm flex flex-col gap-5" style={{
-        background: '#1c2030',
-        borderRadius: 24,
-        padding: '28px 24px 24px',
-        boxShadow: '0 -4px 60px rgba(0,0,0,0.5)',
-        border: '1px solid rgba(255,255,255,0.08)',
-      }}>
+      <div className="relative w-full max-w-sm flex flex-col gap-5" style={sheetStyle}>
         <div>
           <h2 style={{ color: '#fff', fontSize: 20, fontWeight: 600, margin: 0, letterSpacing: '-0.3px' }}>
             What's your name?

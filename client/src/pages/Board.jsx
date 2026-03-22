@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 import BoardCanvas from '../components/BoardCanvas'
 import CameraModal from '../components/CameraModal'
+import EmojiPanel from '../components/EmojiPanel'
 import NameModal from '../components/NameModal'
 import Toolbar from '../components/Toolbar'
 
@@ -42,15 +43,36 @@ export default function Board() {
   const [nameModalOpen, setNameModalOpen] = useState(() => !safeLocalStorage(NAME_KEY))
   const [uploading, setUploading] = useState(false)
   const [remoteCursors, setRemoteCursors] = useState(new Map())
+  const [stickers, setStickers] = useState(new Map())
+  const [stampEmoji, setStampEmoji] = useState(null)
   const [linkCopied, setLinkCopied] = useState(false)
   const boardRef = useRef(null)
   const panOffsetRef = useRef({ x: 0, y: 0, zoom: 1 })
 
   const { cards, addCard, moveCard, bringToFront, loadCards, removeCard } = useBoard()
 
+  // ── Sticker helpers ───────────────────────────────────────────────────────
+  function addSticker(sticker) {
+    setStickers(prev => { const n = new Map(prev); n.set(sticker.id, sticker); return n })
+  }
+  function moveStickerLocal(id, x, y) {
+    setStickers(prev => {
+      if (!prev.has(id)) return prev
+      const n = new Map(prev)
+      n.set(id, { ...n.get(id), x, y })
+      return n
+    })
+  }
+  function removeStickerLocal(id) {
+    setStickers(prev => { const n = new Map(prev); n.delete(id); return n })
+  }
+
   // ── PartyKit handlers ────────────────────────────────────────────────────
-  const handleInit = useCallback((serverCards) => {
+  const handleInit = useCallback((serverCards, serverStickers) => {
     loadCards(serverCards ?? [])
+    const map = new Map()
+    ;(serverStickers ?? []).forEach(s => map.set(s.id, s))
+    setStickers(map)
   }, [loadCards])
 
   const handleRemoteCardAdd = useCallback((card) => {
@@ -73,13 +95,16 @@ export default function Board() {
     })
   }, [])
 
-  const { emitCardAdd, emitCardMove, emitCardRemove, emitCursorMove } = usePartyKit({
+  const { emitCardAdd, emitCardMove, emitCardRemove, emitCursorMove, emitStickerAdd, emitStickerMove, emitStickerRemove } = usePartyKit({
     roomId,
     onInit: handleInit,
     onCardAdd: handleRemoteCardAdd,
     onCardMove: handleRemoteCardMove,
     onCardRemove: handleRemoteCardRemove,
     onCursorMove: handleCursorMove,
+    onStickerAdd: useCallback((s) => addSticker(s), []),
+    onStickerMove: useCallback((id, x, y) => moveStickerLocal(id, x, y), []),
+    onStickerRemove: useCallback((id) => removeStickerLocal(id), []),
   })
 
   // ── Name handling ────────────────────────────────────────────────────────
@@ -136,6 +161,30 @@ export default function Board() {
     emitCardRemove(id)
   }, [removeCard, emitCardRemove])
 
+  // ── Sticker placement ─────────────────────────────────────────────────────
+  const handleCanvasTap = useCallback((x, y) => {
+    if (!stampEmoji) return
+    const sticker = {
+      id: uuidv4(),
+      emoji: stampEmoji,
+      x,
+      y,
+      rotation: (Math.random() - 0.5) * 20,
+    }
+    addSticker(sticker)
+    emitStickerAdd(sticker)
+  }, [stampEmoji, emitStickerAdd])
+
+  const handleStickerDragEnd = useCallback((id, x, y) => {
+    moveStickerLocal(id, x, y)
+    emitStickerMove(id, x, y)
+  }, [emitStickerMove])
+
+  const handleStickerDelete = useCallback((id) => {
+    removeStickerLocal(id)
+    emitStickerRemove(id)
+  }, [emitStickerRemove])
+
   // ── Cursor broadcast ─────────────────────────────────────────────────────
   const handleCursorBroadcast = useCallback((x, y) => {
     emitCursorMove(x, y, userName)
@@ -163,6 +212,11 @@ export default function Board() {
         onCardDelete={handleCardDelete}
         onCursorMove={handleCursorBroadcast}
         panRef={panOffsetRef}
+        stickers={stickers}
+        stampEmoji={stampEmoji}
+        onCanvasTap={handleCanvasTap}
+        onStickerDragEnd={handleStickerDragEnd}
+        onStickerDelete={handleStickerDelete}
       />
 
       <Toolbar
@@ -172,6 +226,8 @@ export default function Board() {
         onNameEdit={() => setNameModalOpen(true)}
         onCopyLink={handleCopyLink}
       />
+
+      <EmojiPanel activeEmoji={stampEmoji} onSelect={setStampEmoji} />
 
       {/* Upload indicator */}
       {uploading && (

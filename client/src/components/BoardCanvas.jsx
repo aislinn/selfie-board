@@ -1,5 +1,6 @@
 import { useRef, useEffect } from 'react'
 import PhotoCard from './PhotoCard'
+import StickerCard from './StickerCard'
 import RemoteCursors from './RemoteCursors'
 
 function throttle(fn, ms) {
@@ -24,11 +25,18 @@ const CANVAS_SIZE = 5000  // fixed canvas square in px
  *   onCardDelete  – (id)
  *   onCursorMove  – (x, y) in canvas-space
  *   panRef        – optional ref; receives { x, y, zoom } on every transform update
+ *   stickers      – Map<id, sticker>
+ *   stampEmoji    – emoji string when in stamp mode, or null
+ *   onCanvasTap   – (canvasX, canvasY) called on a short tap on empty canvas space
+ *   onStickerDragEnd – (id, x, y)
+ *   onStickerDelete  – (id)
  */
 export default function BoardCanvas({
   cards, remoteCursors, userName,
   onCardDragEnd, onCardFocus, onCardDelete, onCursorMove,
   panRef,
+  stickers, stampEmoji, onCanvasTap,
+  onStickerDragEnd, onStickerDelete,
 }) {
   const outerRef = useRef(null)
   const innerRef = useRef(null)
@@ -177,6 +185,7 @@ export default function BoardCanvas({
   }
 
   function handlePointerUp(e) {
+    const ps = panState.current
     activePointers.current.delete(e.pointerId)
     if (activePointers.current.size === 1) {
       // One finger remaining — resume pan from current position
@@ -189,6 +198,18 @@ export default function BoardCanvas({
       }
     } else if (activePointers.current.size === 0) {
       panState.current = null
+      // Detect tap: small displacement → stamp placement
+      if (ps && onCanvasTap) {
+        const dx = e.clientX - ps.startPointerX
+        const dy = e.clientY - ps.startPointerY
+        if (Math.abs(dx) < 6 && Math.abs(dy) < 6) {
+          const { x: px, y: py } = currentPan.current
+          onCanvasTap(
+            (e.clientX - px) / currentZoom.current,
+            (e.clientY - py) / currentZoom.current,
+          )
+        }
+      }
     }
   }
 
@@ -203,7 +224,7 @@ export default function BoardCanvas({
       style={{
         backgroundColor: '#232836',
         touchAction: 'none',
-        cursor: 'grab',
+        cursor: stampEmoji ? 'crosshair' : 'grab',
       }}
     >
       {/* Inner layer — all cards and cursors live here, panned/zoomed via transform */}
@@ -245,6 +266,21 @@ export default function BoardCanvas({
             onDragEnd={onCardDragEnd}
             onFocus={onCardFocus}
             onDelete={onCardDelete}
+            zoomRef={zoomRef}
+            isPinchingRef={isPinchingRef}
+            isStamping={!!stampEmoji}
+            onStamp={(clientX, clientY) => {
+              const { x: px, y: py } = currentPan.current
+              onCanvasTap?.((clientX - px) / currentZoom.current, (clientY - py) / currentZoom.current)
+            }}
+          />
+        ))}
+        {stickers && [...stickers.values()].map(sticker => (
+          <StickerCard
+            key={sticker.id}
+            sticker={sticker}
+            onDragEnd={onStickerDragEnd}
+            onDelete={onStickerDelete}
             zoomRef={zoomRef}
             isPinchingRef={isPinchingRef}
           />

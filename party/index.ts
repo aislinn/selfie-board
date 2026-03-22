@@ -13,11 +13,22 @@ interface Card {
   created_at: string
 }
 
+interface Sticker {
+  id: string
+  emoji: string
+  x: number
+  y: number
+  rotation: number
+}
+
 type IncomingMessage =
   | { type: 'card:add'; card: Card }
   | { type: 'card:move'; id: string; x: number; y: number }
   | { type: 'card:remove'; id: string }
   | { type: 'cursor:move'; x: number; y: number; name: string | null }
+  | { type: 'sticker:add'; sticker: Sticker }
+  | { type: 'sticker:move'; id: string; x: number; y: number }
+  | { type: 'sticker:remove'; id: string }
 
 // ── Supabase REST helpers ────────────────────────────────────────────────────
 
@@ -81,6 +92,7 @@ async function deleteCard(supabaseUrl: string, serviceKey: string, id: string): 
 
 export default class SelfieBoard implements Party.Server {
   private cards: Card[] = []
+  private stickers: Sticker[] = []
   private loaded = false
 
   constructor(readonly room: Party.Room) {}
@@ -100,7 +112,7 @@ export default class SelfieBoard implements Party.Server {
         this.cards = await getCardsForRoom(this.supabaseUrl, this.serviceKey, this.room.id)
         this.loaded = true
       }
-      return new Response(JSON.stringify(this.cards), {
+      return new Response(JSON.stringify({ cards: this.cards, stickers: this.stickers }), {
         headers: {
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*',
@@ -116,7 +128,7 @@ export default class SelfieBoard implements Party.Server {
       this.cards = await getCardsForRoom(this.supabaseUrl, this.serviceKey, this.room.id)
       this.loaded = true
     }
-    conn.send(JSON.stringify({ type: 'init', cards: this.cards }))
+    conn.send(JSON.stringify({ type: 'init', cards: this.cards, stickers: this.stickers }))
   }
 
   /** Called for every message received from a client */
@@ -162,6 +174,25 @@ export default class SelfieBoard implements Party.Server {
           JSON.stringify({ type: 'cursor:move', clientId: sender.id, x: msg.x, y: msg.y, name: msg.name }),
           [sender.id]
         )
+        break
+      }
+
+      case 'sticker:add': {
+        this.stickers.push(msg.sticker)
+        this.room.broadcast(JSON.stringify({ type: 'sticker:add', sticker: msg.sticker }), [sender.id])
+        break
+      }
+
+      case 'sticker:move': {
+        const idx = this.stickers.findIndex(s => s.id === msg.id)
+        if (idx !== -1) this.stickers[idx] = { ...this.stickers[idx], x: msg.x, y: msg.y }
+        this.room.broadcast(JSON.stringify({ type: 'sticker:move', id: msg.id, x: msg.x, y: msg.y }), [sender.id])
+        break
+      }
+
+      case 'sticker:remove': {
+        this.stickers = this.stickers.filter(s => s.id !== msg.id)
+        this.room.broadcast(JSON.stringify({ type: 'sticker:remove', id: msg.id }), [sender.id])
         break
       }
     }

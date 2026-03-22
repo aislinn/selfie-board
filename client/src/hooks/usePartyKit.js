@@ -3,7 +3,13 @@ import PartySocket from 'partysocket'
 
 const PARTYKIT_HOST = import.meta.env.VITE_PARTYKIT_HOST ?? 'localhost:1999'
 
-export function usePartyKit({ roomId, onCardAdd, onCardMove, onCardRemove, onCursorMove, onInit }) {
+export function usePartyKit({
+  roomId,
+  onInit,
+  onCardAdd, onCardMove, onCardRemove,
+  onCursorMove,
+  onStickerAdd, onStickerMove, onStickerRemove,
+}) {
   const socketRef = useRef(null)
 
   useEffect(() => {
@@ -20,7 +26,7 @@ export function usePartyKit({ roomId, onCardAdd, onCardMove, onCardRemove, onCur
 
       switch (msg.type) {
         case 'init':
-          onInit?.(msg.cards)
+          onInit?.(msg.cards, msg.stickers ?? [])
           break
         case 'card:add':
           onCardAdd?.(msg.card)
@@ -33,6 +39,15 @@ export function usePartyKit({ roomId, onCardAdd, onCardMove, onCardRemove, onCur
           break
         case 'cursor:move':
           onCursorMove?.(msg.clientId, msg.x, msg.y, msg.name)
+          break
+        case 'sticker:add':
+          onStickerAdd?.(msg.sticker)
+          break
+        case 'sticker:move':
+          onStickerMove?.(msg.id, msg.x, msg.y)
+          break
+        case 'sticker:remove':
+          onStickerRemove?.(msg.id)
           break
         default:
           break
@@ -49,7 +64,6 @@ export function usePartyKit({ roomId, onCardAdd, onCardMove, onCardRemove, onCur
   }, [roomId])
 
   const send = useCallback((msg) => {
-    // PartySocket buffers sends during reconnection — no readyState check needed
     socketRef.current?.send(JSON.stringify(msg))
   }, [])
 
@@ -69,5 +83,17 @@ export function usePartyKit({ roomId, onCardAdd, onCardMove, onCardRemove, onCur
     send({ type: 'cursor:move', x, y, name })
   }, [send])
 
-  return { emitCardAdd, emitCardMove, emitCardRemove, emitCursorMove }
+  const emitStickerAdd = useCallback((sticker) => {
+    send({ type: 'sticker:add', sticker })
+  }, [send])
+
+  const emitStickerMove = useCallback((id, x, y) => {
+    send({ type: 'sticker:move', id, x, y })
+  }, [send])
+
+  const emitStickerRemove = useCallback((id) => {
+    send({ type: 'sticker:remove', id })
+  }, [send])
+
+  return { emitCardAdd, emitCardMove, emitCardRemove, emitCursorMove, emitStickerAdd, emitStickerMove, emitStickerRemove }
 }
