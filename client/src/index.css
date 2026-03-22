@@ -1,14 +1,11 @@
 @import "tailwindcss";
 
-@keyframes shutter-press {
-  0%   { transform: translate(-50%, 0) scale(1); }
-  30%  { transform: translate(-50%, 0) scale(0.88); }
-  65%  { transform: translate(-50%, 0) scale(1.04); }
-  100% { transform: translate(-50%, 0) scale(1); }
+.shutter-btn {
+  transition: transform 0.08s ease-out;
 }
 
 .shutter-btn:active {
-  animation: shutter-press 0.25s ease-out forwards;
+  transform: translate(-50%, 0) scale(0.9);
 }
 
 *, *::before, *::after {
