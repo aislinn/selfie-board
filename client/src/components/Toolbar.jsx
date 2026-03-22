@@ -25,7 +25,7 @@ export default function Toolbar({ roomId, userName, onCameraOpen, onNameEdit, on
       </div>
 
       {/* Info pill — bottom right */}
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-auto sm:top-auto sm:bottom-12 sm:right-6 z-40 flex items-center bg-white/70 backdrop-blur-sm shadow-xl rounded-full px-4 py-1.5 border border-gray-100">
+      <div className="absolute left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-auto sm:top-auto sm:bottom-12 sm:right-6 z-40 flex items-center bg-white/70 backdrop-blur-sm shadow-xl rounded-full px-4 py-1.5 border border-gray-100" style={{ top: 'max(16px, env(safe-area-inset-top, 16px) + 8px)' }}>
         <button
           onPointerDown={onNameEdit}
           className="flex items-center text-sm text-gray-900 hover:text-gray-900 transition-colors"
