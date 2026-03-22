@@ -8,7 +8,7 @@ import { useRef, useCallback } from 'react'
  *   onFocus     – (id) called when card is tapped/clicked
  *   onDelete    – (id) called when user taps the × button
  */
-export default function PhotoCard({ card, isOwn, onDragEnd, onFocus, onDelete, zoomRef }) {
+export default function PhotoCard({ card, isOwn, onDragEnd, onFocus, onDelete, zoomRef, isPinchingRef }) {
   const { id, image_url, x, y, rotation, name, created_at, zIndex } = card
   const dragState = useRef(null)
 
@@ -32,6 +32,7 @@ export default function PhotoCard({ card, isOwn, onDragEnd, onFocus, onDelete, z
   const handlePointerMove = useCallback((e) => {
     const ds = dragState.current
     if (!ds) return
+    if (isPinchingRef?.current) return  // freeze card during pinch
     const dxScreen = e.clientX - ds.startPointerX
     const dyScreen = e.clientY - ds.startPointerY
     if (Math.abs(dxScreen) > 2 || Math.abs(dyScreen) > 2) ds.moved = true

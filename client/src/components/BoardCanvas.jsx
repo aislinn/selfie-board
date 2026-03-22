@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, useEffect } from 'react'
 import PhotoCard from './PhotoCard'
 import RemoteCursors from './RemoteCursors'
 
@@ -35,6 +35,22 @@ export default function BoardCanvas({
   const currentPan = useRef({ x: 0, y: 0 })
   const currentZoom = useRef(1)
   const zoomRef = useRef(1)  // shared with PhotoCard so card drag scales correctly
+  const isPinchingRef = useRef(false)  // shared with PhotoCard to block card drag during pinch
+
+  // Track total active pointers on the page (including those captured by cards)
+  useEffect(() => {
+    let count = 0
+    const onDown = () => { count++; if (count >= 2) isPinchingRef.current = true }
+    const onUp   = () => { count = Math.max(0, count - 1); if (count < 2) isPinchingRef.current = false }
+    document.addEventListener('pointerdown',   onDown)
+    document.addEventListener('pointerup',     onUp)
+    document.addEventListener('pointercancel', onUp)
+    return () => {
+      document.removeEventListener('pointerdown',   onDown)
+      document.removeEventListener('pointerup',     onUp)
+      document.removeEventListener('pointercancel', onUp)
+    }
+  }, [])
 
   const throttledCursorMove = useRef(
     throttle((x, y) => onCursorMove?.(x, y), 33)
@@ -168,6 +184,7 @@ export default function BoardCanvas({
             onFocus={onCardFocus}
             onDelete={onCardDelete}
             zoomRef={zoomRef}
+            isPinchingRef={isPinchingRef}
           />
         ))}
         <RemoteCursors cursors={remoteCursors} />
