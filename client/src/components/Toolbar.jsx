@@ -10,9 +10,10 @@ export default function Toolbar({ roomId, userName, onCameraOpen, onNameEdit, on
   return (
     <>
       {/* Standalone shutter button — bottom centre */}
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-40 drop-shadow-xl">
       <button
         onPointerDown={onCameraOpen}
-        className="shutter-btn absolute bottom-10 left-1/2 -translate-x-1/2 z-40 drop-shadow-xl"
+        className="shutter-btn"
         title="Take selfie"
         aria-label="Take selfie"
       >
@@ -21,6 +22,7 @@ export default function Toolbar({ roomId, userName, onCameraOpen, onNameEdit, on
           <circle cx="90" cy="90" r="71" fill="white"/>
         </svg>
       </button>
+      </div>
 
       {/* Info pill — bottom right */}
       <div className="absolute bottom-6 right-6 z-40 flex items-center gap-3 bg-white/90 backdrop-blur-sm shadow-xl rounded-2xl px-4 py-2.5 border border-gray-100">

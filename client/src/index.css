@@ -2,10 +2,11 @@
 
 .shutter-btn {
   transition: transform 0.08s ease-out;
+  display: block;
 }
 
 .shutter-btn:active {
-  transform: translate(-50%, 0) scale(0.9);
+  transform: scale(0.9);
 }
 
 *, *::before, *::after {
