@@ -59,23 +59,21 @@ export default function CameraModal({ onCapture, onClose }) {
 
         {/* Video / preview area — square to match captured photo */}
         <div className="relative bg-black aspect-square w-full overflow-hidden">
-          {!preview ? (
-            <>
-              <video
-                ref={videoRef}
-                autoPlay
-                playsInline
-                muted
-                className="w-full h-full object-cover"
-                style={{ transform: facingMode === 'user' ? 'scaleX(-1)' : 'none' }}
-              />
-              {error && (
-                <div className="absolute inset-0 flex items-center justify-center text-white text-sm text-center px-6">
-                  <p>⚠️ {error}</p>
-                </div>
-              )}
-            </>
-          ) : (
+          {/* Video stays mounted so the stream stays connected on retake */}
+          <video
+            ref={videoRef}
+            autoPlay
+            playsInline
+            muted
+            className="w-full h-full object-cover"
+            style={{ transform: facingMode === 'user' ? 'scaleX(-1)' : 'none', display: preview ? 'none' : 'block' }}
+          />
+          {error && !preview && (
+            <div className="absolute inset-0 flex items-center justify-center text-white text-sm text-center px-6">
+              <p>⚠️ {error}</p>
+            </div>
+          )}
+          {preview && (
             <img src={preview} alt="Preview" className="w-full h-full object-cover" />
           )}
         </div>
