@@ -38,13 +38,13 @@ export default function BoardCanvas({
   ).current
 
   function handlePointerDown(e) {
-    e.currentTarget.setPointerCapture(e.pointerId)
     panState.current = {
       startPointerX: e.clientX,
       startPointerY: e.clientY,
       originPanX: currentPan.current.x,
       originPanY: currentPan.current.y,
     }
+    try { e.currentTarget.setPointerCapture(e.pointerId) } catch { /* ignore */ }
   }
 
   function handlePointerMove(e) {
@@ -85,7 +85,7 @@ export default function BoardCanvas({
       {/* Inner layer — all cards and cursors live here, panned via transform */}
       <div
         ref={innerRef}
-        style={{ position: 'absolute', inset: 0, willChange: 'transform' }}
+        style={{ position: 'absolute', inset: 0, willChange: 'transform', touchAction: 'none' }}
       >
         {[...cards.values()].map(card => (
           <PhotoCard
