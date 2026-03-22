@@ -9,12 +9,22 @@ import { useCamera } from '../hooks/useCamera'
 export default function CameraModal({ onCapture, onClose }) {
   const { videoRef, isStreaming, error, facingMode, startCamera, stopCamera, flipCamera, capturePhoto } = useCamera()
   const [preview, setPreview] = useState(null)
+  const [visible, setVisible] = useState(false)
 
   useEffect(() => {
     startCamera()
-    return () => stopCamera()
+    const raf = requestAnimationFrame(() => setVisible(true))
+    return () => {
+      cancelAnimationFrame(raf)
+      stopCamera()
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  function dismiss(cb) {
+    setVisible(false)
+    setTimeout(cb, 220)
+  }
 
   function handleSnap() {
     const dataUrl = capturePhoto(0.7)
@@ -23,8 +33,8 @@ export default function CameraModal({ onCapture, onClose }) {
 
   function handleConfirm() {
     if (preview) {
-      onCapture(preview)
-      stopCamera()
+      const data = preview
+      dismiss(() => { stopCamera(); onCapture(data) })
     }
   }
 
@@ -34,14 +44,12 @@ export default function CameraModal({ onCapture, onClose }) {
 
   function handleClose(e) {
     e.stopPropagation()
-    stopCamera()
-    onClose()
+    dismiss(() => { stopCamera(); onClose() })
   }
 
   function handleBackdrop(e) {
     if (e.target === e.currentTarget) {
-      stopCamera()
-      onClose()
+      dismiss(() => { stopCamera(); onClose() })
     }
   }
 
@@ -52,29 +60,39 @@ export default function CameraModal({ onCapture, onClose }) {
       onPointerDown={handleBackdrop}
     >
       {/* Desktop backdrop */}
-      <div className="hidden sm:block absolute inset-0 backdrop-blur-sm" style={{ background: 'rgba(35,40,54,0.85)' }} />
+      <div
+        className="hidden sm:block absolute inset-0 backdrop-blur-sm"
+        style={{
+          background: 'rgba(10,13,22,0.85)',
+          opacity: visible ? 1 : 0,
+          transition: 'opacity 0.2s ease',
+        }}
+        onPointerDown={() => dismiss(() => { stopCamera(); onClose() })}
+      />
 
       {/* Card — full screen on mobile, constrained dark card on desktop */}
       <div
-        className="relative flex flex-col w-full h-full sm:h-auto sm:max-w-sm sm:rounded-2xl overflow-hidden"
+        className="relative flex flex-col w-full h-full sm:h-auto sm:max-w-sm sm:rounded-3xl overflow-hidden"
         style={{
           background: '#1A1F2B',
           border: '1px solid rgba(255,255,255,0.08)',
           borderBottom: 'none',
           boxShadow: '0 -4px 60px rgba(0,0,0,0.6)',
+          opacity: visible ? 1 : 0,
+          transform: visible ? 'translateY(0) scale(1)' : 'translateY(16px) scale(0.97)',
+          transition: 'opacity 0.22s ease, transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1)',
         }}
       >
         {/* Header */}
         <div
-          className="flex items-center justify-between px-5 py-4 z-10"
-          style={{}}
+          className="relative flex items-center justify-center px-5 py-4 z-10"
         >
-          <span style={{ color: '#fff', fontWeight: 600, fontSize: 16, letterSpacing: '-0.3px' }}>
+          <span style={{ color: '#fff', fontWeight: 400, fontSize: 18, letterSpacing: '-0.3px' }}>
             Take a selfie
           </span>
           <button
             onPointerDown={handleClose}
-            style={{ color: 'rgba(255,255,255,0.45)', fontSize: 26, lineHeight: 1, cursor: 'pointer', background: 'none', border: 'none', padding: 0 }}
+            style={{ position: 'absolute', right: 20, color: 'rgba(255,255,255,0.45)', fontSize: 26, lineHeight: 1, cursor: 'pointer', background: 'none', border: 'none', padding: 0 }}
           >
             ×
           </button>

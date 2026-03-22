@@ -33,13 +33,13 @@ export default function NameModal({ initial = '', onConfirm, onSkip }) {
   }
 
   const backdropStyle = {
-    background: 'rgba(35, 40, 54, 0.85)',
+    background: 'rgba(10, 13, 22, 0.85)',
     opacity: visible ? 1 : 0,
     transition: 'opacity 0.2s ease',
   }
 
   const sheetStyle = {
-    background: '#1c2030',
+    background: '#1A1F2B',
     borderRadius: 24,
     padding: '28px 24px 24px',
     boxShadow: '0 -4px 60px rgba(0,0,0,0.5)',
@@ -56,8 +56,8 @@ export default function NameModal({ initial = '', onConfirm, onSkip }) {
 
       {/* Sheet */}
       <div className="relative w-full max-w-sm flex flex-col gap-5" style={sheetStyle}>
-        <div>
-          <h2 style={{ color: '#fff', fontSize: 20, fontWeight: 600, margin: 0, letterSpacing: '-0.3px' }}>
+        <div style={{ textAlign: 'center' }}>
+          <h2 style={{ color: '#fff', fontSize: 20, fontWeight: 400, margin: 0, letterSpacing: '-0.3px' }}>
             What's your name?
           </h2>
           <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 14, margin: '4px 0 0' }}>
@@ -75,12 +75,13 @@ export default function NameModal({ initial = '', onConfirm, onSkip }) {
             maxLength={40}
             style={{
               width: '100%',
-              padding: '14px 16px',
+              height: 44,
+              padding: '0 16px',
               borderRadius: 14,
               border: '1px solid rgba(255,255,255,0.12)',
               background: 'rgba(255,255,255,0.07)',
               color: '#fff',
-              fontSize: 16,
+              fontSize: 15,
               outline: 'none',
               boxSizing: 'border-box',
             }}
@@ -91,13 +92,14 @@ export default function NameModal({ initial = '', onConfirm, onSkip }) {
             type="submit"
             style={{
               width: '100%',
-              padding: '14px',
+              height: 44,
+              padding: '0 16px',
               borderRadius: 14,
               border: 'none',
               background: value.trim() ? '#fff' : 'rgba(255,255,255,0.1)',
               color: value.trim() ? '#111' : 'rgba(255,255,255,0.4)',
               fontSize: 15,
-              fontWeight: 600,
+              fontWeight: 400,
               cursor: 'pointer',
               transition: 'all 0.15s ease',
               letterSpacing: '-0.2px',

@@ -220,7 +220,7 @@ export default function BoardCanvas({
           touchAction: 'none',
           transformOrigin: '0 0',
           overflow: 'hidden',
-          background: 'radial-gradient(circle, rgba(61,68,96,0.5) 1px, transparent 1px)',
+          background: 'radial-gradient(circle, rgba(61,68,96,0.9) 1px, transparent 1px)',
           backgroundSize: '28px 28px',
           backgroundColor: '#1A1F2B',
         }}
