@@ -23,6 +23,13 @@ export function useCamera() {
       if (videoRef.current) {
         videoRef.current.srcObject = stream
       }
+      // Request continuous autofocus to prevent tap-to-focus blur on mobile
+      const track = stream.getVideoTracks()[0]
+      if (track) {
+        try {
+          await track.applyConstraints({ advanced: [{ focusMode: 'continuous' }] })
+        } catch { /* not supported on all devices, ignore */ }
+      }
       setIsStreaming(true)
     } catch (err) {
       setError(err.message ?? 'Camera access denied')

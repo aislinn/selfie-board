@@ -87,7 +87,7 @@ export default function CameraModal({ onCapture, onClose }) {
             playsInline
             muted
             className="w-full h-full object-cover"
-            style={{ transform: facingMode === 'user' ? 'scaleX(-1)' : 'none', display: preview ? 'none' : 'block' }}
+            style={{ transform: facingMode === 'user' ? 'scaleX(-1)' : 'none', display: preview ? 'none' : 'block', pointerEvents: 'none', touchAction: 'none' }}
           />
           {error && !preview && (
             <div className="absolute inset-0 flex items-center justify-center text-white text-sm text-center px-6">

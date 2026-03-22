@@ -202,7 +202,7 @@ export default function BoardCanvas({
       onPointerCancel={handlePointerUp}
       className="relative w-full h-full overflow-hidden"
       style={{
-        backgroundColor: '#232836',
+        backgroundColor: '#171B25',
         touchAction: 'none',
         cursor: 'grab',
       }}
@@ -222,7 +222,7 @@ export default function BoardCanvas({
           overflow: 'hidden',
           background: 'radial-gradient(circle, #3d4460 1px, transparent 1px)',
           backgroundSize: '28px 28px',
-          backgroundColor: '#232836',
+          backgroundColor: '#171B25',
         }}
       >
         {/* Centre marker */}
