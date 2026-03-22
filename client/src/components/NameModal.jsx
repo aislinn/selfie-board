@@ -81,7 +81,7 @@ export default function NameModal({ initial = '', onConfirm, onSkip }) {
               border: '1px solid rgba(255,255,255,0.12)',
               background: 'rgba(255,255,255,0.07)',
               color: '#fff',
-              fontSize: 15,
+              fontSize: 16,
               outline: 'none',
               boxSizing: 'border-box',
             }}
