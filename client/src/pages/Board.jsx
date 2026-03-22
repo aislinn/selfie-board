@@ -24,12 +24,14 @@ function getRandomRotation() {
   return (Math.random() - 0.5) * 14
 }
 
-function randomPlacement(boardEl, panOffset = { x: 0, y: 0 }) {
+function randomPlacement(boardEl, { x: panX = 0, y: panY = 0, zoom = 1 } = {}) {
   if (!boardEl) return { x: 100, y: 100 }
   const { clientWidth: w, clientHeight: h } = boardEl
+  const screenX = 80 + Math.random() * Math.max(0, w - 260)
+  const screenY = 80 + Math.random() * Math.max(0, h - 300)
   return {
-    x: -panOffset.x + 80 + Math.random() * Math.max(0, w - 260),
-    y: -panOffset.y + 80 + Math.random() * Math.max(0, h - 300),
+    x: (screenX - panX) / zoom,
+    y: (screenY - panY) / zoom,
   }
 }
 
@@ -42,7 +44,7 @@ export default function Board() {
   const [remoteCursors, setRemoteCursors] = useState(new Map())
   const [linkCopied, setLinkCopied] = useState(false)
   const boardRef = useRef(null)
-  const panOffsetRef = useRef({ x: 0, y: 0 })
+  const panOffsetRef = useRef({ x: 0, y: 0, zoom: 1 })
 
   const { cards, addCard, moveCard, bringToFront, loadCards, removeCard } = useBoard()
 

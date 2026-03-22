@@ -8,7 +8,7 @@ import { useRef, useCallback } from 'react'
  *   onFocus     – (id) called when card is tapped/clicked
  *   onDelete    – (id) called when user taps the × button
  */
-export default function PhotoCard({ card, isOwn, onDragEnd, onFocus, onDelete }) {
+export default function PhotoCard({ card, isOwn, onDragEnd, onFocus, onDelete, zoomRef }) {
   const { id, image_url, x, y, rotation, name, created_at, zIndex } = card
   const dragState = useRef(null)
 
@@ -32,24 +32,26 @@ export default function PhotoCard({ card, isOwn, onDragEnd, onFocus, onDelete })
   const handlePointerMove = useCallback((e) => {
     const ds = dragState.current
     if (!ds) return
-    const dx = e.clientX - ds.startPointerX
-    const dy = e.clientY - ds.startPointerY
-    if (Math.abs(dx) > 2 || Math.abs(dy) > 2) ds.moved = true
+    const dxScreen = e.clientX - ds.startPointerX
+    const dyScreen = e.clientY - ds.startPointerY
+    if (Math.abs(dxScreen) > 2 || Math.abs(dyScreen) > 2) ds.moved = true
+    const zoom = zoomRef?.current ?? 1
     const el = e.currentTarget
-    el.style.left = `${ds.startCardX + dx}px`
-    el.style.top = `${ds.startCardY + dy}px`
-  }, [])
+    el.style.left = `${ds.startCardX + dxScreen / zoom}px`
+    el.style.top = `${ds.startCardY + dyScreen / zoom}px`
+  }, [zoomRef])
 
   const handlePointerUp = useCallback((e) => {
     const ds = dragState.current
     if (!ds) return
     dragState.current = null
     if (ds.moved) {
-      const dx = e.clientX - ds.startPointerX
-      const dy = e.clientY - ds.startPointerY
+      const zoom = zoomRef?.current ?? 1
+      const dx = (e.clientX - ds.startPointerX) / zoom
+      const dy = (e.clientY - ds.startPointerY) / zoom
       onDragEnd(id, ds.startCardX + dx, ds.startCardY + dy)
     }
-  }, [id, onDragEnd])
+  }, [id, onDragEnd, zoomRef])
 
   function handleDelete(e) {
     e.stopPropagation()
