@@ -17,13 +17,27 @@ export default function NameModal({ initial = '', onConfirm, onSkip }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-xs p-6 flex flex-col gap-4">
-        <div className="text-center">
-          <div className="text-3xl mb-2">👤</div>
-          <h2 className="text-lg font-semibold text-gray-900">What's your name?</h2>
-          <p className="text-sm text-gray-400 mt-1">It'll appear on your selfie cards</p>
+    <div className="fixed inset-0 z-50 flex items-end justify-center p-4 pb-8">
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+
+      {/* Sheet */}
+      <div className="relative w-full max-w-sm flex flex-col gap-5" style={{
+        background: '#1c2030',
+        borderRadius: 24,
+        padding: '28px 24px 24px',
+        boxShadow: '0 -4px 60px rgba(0,0,0,0.5)',
+        border: '1px solid rgba(255,255,255,0.08)',
+      }}>
+        <div>
+          <h2 style={{ color: '#fff', fontSize: 20, fontWeight: 600, margin: 0, letterSpacing: '-0.3px' }}>
+            What's your name?
+          </h2>
+          <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 14, margin: '4px 0 0' }}>
+            It'll appear on your selfie cards
+          </p>
         </div>
+
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           <input
             autoFocus
@@ -31,14 +45,38 @@ export default function NameModal({ initial = '', onConfirm, onSkip }) {
             value={value}
             onChange={e => setValue(e.target.value)}
             placeholder="Your name"
-            className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-gray-900 placeholder-gray-300 outline-none focus:border-gray-400 transition-colors"
             maxLength={40}
+            style={{
+              width: '100%',
+              padding: '14px 16px',
+              borderRadius: 14,
+              border: '1px solid rgba(255,255,255,0.12)',
+              background: 'rgba(255,255,255,0.07)',
+              color: '#fff',
+              fontSize: 16,
+              outline: 'none',
+              boxSizing: 'border-box',
+            }}
+            onFocus={e => e.target.style.borderColor = 'rgba(255,255,255,0.3)'}
+            onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.12)'}
           />
           <button
             type="submit"
-            className="w-full py-2.5 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-700 active:scale-95 transition-all"
+            style={{
+              width: '100%',
+              padding: '14px',
+              borderRadius: 14,
+              border: 'none',
+              background: value.trim() ? '#fff' : 'rgba(255,255,255,0.1)',
+              color: value.trim() ? '#111' : 'rgba(255,255,255,0.4)',
+              fontSize: 15,
+              fontWeight: 600,
+              cursor: 'pointer',
+              transition: 'all 0.15s ease',
+              letterSpacing: '-0.2px',
+            }}
           >
-            {value.trim() ? 'Save' : 'Skip'}
+            {value.trim() ? 'Continue' : 'Skip'}
           </button>
         </form>
       </div>
