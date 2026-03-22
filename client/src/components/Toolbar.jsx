@@ -12,7 +12,7 @@ export default function Toolbar({ roomId, userName, onCameraOpen, onNameEdit, on
       {/* Standalone shutter button — bottom centre */}
       <button
         onPointerDown={onCameraOpen}
-        className="shutter-btn absolute bottom-14 left-1/2 -translate-x-1/2 z-40 drop-shadow-xl"
+        className="shutter-btn absolute bottom-10 left-1/2 -translate-x-1/2 z-40 drop-shadow-xl"
         title="Take selfie"
         aria-label="Take selfie"
       >
