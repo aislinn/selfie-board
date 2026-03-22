@@ -120,7 +120,7 @@ export default function CameraModal({ onCapture, onClose }) {
 
         {/* Controls — pb-10 keeps shutter button at same position as canvas button */}
         <div
-          className="flex items-center justify-around px-6 pt-5 pb-10 sm:pb-6"
+          className="flex items-center justify-around px-6 pt-5 pb-6"
           style={{}}
         >
           {!preview ? (

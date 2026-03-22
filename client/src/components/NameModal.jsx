@@ -50,7 +50,7 @@ export default function NameModal({ initial = '', onConfirm, onSkip }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:items-center sm:pt-0 p-4">
       {/* Backdrop */}
       <div className="absolute inset-0 backdrop-blur-sm" style={backdropStyle} onPointerDown={handleBackdrop} />
 

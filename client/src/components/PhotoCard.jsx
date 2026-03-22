@@ -81,9 +81,9 @@ export default function PhotoCard({ card, isOwn, onDragEnd, onFocus, onDelete, z
       {isOwn && (
         <button
           onPointerDown={handleDelete}
-          className={`absolute -top-3 -right-3 z-10 w-7 h-7 rounded-full bg-gray-900 text-white text-sm flex items-center justify-center shadow-md active:scale-90 transition-all
+          className={`absolute -top-3 -right-3 z-10 w-7 h-7 rounded-full bg-white text-gray-800 text-sm flex items-center justify-center active:scale-90 transition-all
                      ${isTouchDevice ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 focus:opacity-100'}`}
-          style={{ touchAction: 'none', lineHeight: 1 }}
+          style={{ touchAction: 'none', lineHeight: 1, boxShadow: '0 1px 4px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,0,0,0.08)' }}
           title="Remove photo"
           aria-label="Remove photo"
         >
