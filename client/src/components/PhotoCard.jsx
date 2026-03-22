@@ -117,7 +117,7 @@ export default function PhotoCard({ card, isOwn, onDragEnd, onFocus, onDelete, z
           padding: 10,
           display: 'flex',
           flexDirection: 'column',
-          gap: 12,
+          gap: 8,
           width: 220,
         }}
       >
@@ -153,7 +153,8 @@ export default function PhotoCard({ card, isOwn, onDragEnd, onFocus, onDelete, z
             fontFamily: "'Caveat', cursive",
             color: '#1e1e1e',
             textAlign: 'center',
-            paddingBottom: 8,
+            paddingTop: 2,
+            paddingBottom: 4,
             display: 'flex',
             flexDirection: 'column',
             gap: 2,
