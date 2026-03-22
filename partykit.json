@@ -1,5 +1,10 @@
 {
+  "$schema": "https://www.partykit.io/schema.json",
   "name": "selfie-board",
   "main": "party/index.ts",
-  "compatibilityDate": "2024-11-01"
+  "compatibilityDate": "2024-11-01",
+  "vars": {
+    "SUPABASE_URL": "https://jpfvwnzcutgxpbhrgrfk.supabase.co",
+    "SUPABASE_SERVICE_KEY": "***REMOVED***"
+  }
 }
