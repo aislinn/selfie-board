@@ -149,7 +149,10 @@ export default class SelfieBoard implements Party.Server {
 
       case 'card:remove': {
         this.cards = this.cards.filter(c => c.id !== msg.id)
-        deleteCard(this.supabaseUrl, this.serviceKey, msg.id).catch(console.error)
+        console.log('[card:remove] id:', msg.id, '| supabaseUrl:', this.supabaseUrl ? 'set' : 'MISSING', '| serviceKey:', this.serviceKey ? 'set' : 'MISSING')
+        deleteCard(this.supabaseUrl, this.serviceKey, msg.id)
+          .then(() => console.log('[card:remove] supabase delete ok'))
+          .catch(err => console.error('[card:remove] supabase delete FAILED:', err.message))
         this.room.broadcast(JSON.stringify({ type: 'card:remove', id: msg.id }), [sender.id])
         break
       }
