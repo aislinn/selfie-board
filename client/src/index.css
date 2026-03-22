@@ -3,6 +3,7 @@
 .shutter-btn {
   transition: transform 0.08s ease-out;
   display: block;
+  cursor: pointer;
 }
 
 .shutter-btn:active {
