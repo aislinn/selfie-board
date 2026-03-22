@@ -14,9 +14,10 @@ export default function PhotoCard({ card, isOwn, onDragEnd, onFocus, onDelete, z
   const { id, image_url, x, y, rotation, name, created_at, zIndex } = card
   const dragState = useRef(null)
 
-  const formattedDate = new Date(created_at).toLocaleString(undefined, {
-    month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit',
-  })
+  const d = new Date(created_at)
+  const datePart = d.toLocaleString(undefined, { month: 'long', day: 'numeric' })
+  const timePart = d.toLocaleString(undefined, { hour: 'numeric', minute: '2-digit' })
+  const formattedDate = `${datePart}, ${timePart}`
 
   const handlePointerDown = useCallback((e) => {
     e.stopPropagation()
@@ -113,7 +114,7 @@ export default function PhotoCard({ card, isOwn, onDragEnd, onFocus, onDelete, z
           border: '1px solid #e0e0e0',
           borderRadius: 8,
           boxShadow: '0px 1px 14px 0px rgba(0,0,0,0.10)',
-          padding: 16,
+          padding: 8,
           display: 'flex',
           flexDirection: 'column',
           gap: 12,
@@ -161,7 +162,7 @@ export default function PhotoCard({ card, isOwn, onDragEnd, onFocus, onDelete, z
           <div style={{ fontSize: 26, lineHeight: 'normal', fontWeight: 400 }}>
             {name || 'Anonymous'}
           </div>
-          <div style={{ fontSize: 16, lineHeight: 1 }}>
+          <div style={{ fontSize: 16, lineHeight: 1, color: '#9ca3af' }}>
             {formattedDate}
           </div>
         </div>
