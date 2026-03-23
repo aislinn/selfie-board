@@ -11,7 +11,7 @@ function throttle(fn, ms) {
 }
 
 const MIN_ZOOM = 0.25
-const MAX_ZOOM = 4
+const MAX_ZOOM = 2
 const CANVAS_SIZE = 5000  // fixed canvas square in px
 
 /**
