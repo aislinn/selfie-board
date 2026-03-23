@@ -92,9 +92,12 @@ export default function CameraModal({ onCapture, onClose }) {
           </span>
           <button
             onPointerDown={handleClose}
-            style={{ position: 'absolute', right: 20, color: 'rgba(255,255,255,0.45)', fontSize: 26, lineHeight: 1, cursor: 'pointer', background: 'none', border: 'none', padding: 0 }}
+            className="absolute flex items-center justify-center"
+            style={{ right: 20, top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.45)', cursor: 'pointer', background: 'none', border: 'none', padding: 4 }}
           >
-            ×
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M2 2L14 14M14 2L2 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
           </button>
         </div>
 
@@ -128,11 +131,15 @@ export default function CameraModal({ onCapture, onClose }) {
               {/* Flip camera */}
               <button
                 onPointerDown={flipCamera}
-                className="w-12 h-12 rounded-full flex items-center justify-center text-xl active:scale-95 transition-all"
-                style={{ background: 'rgba(255,255,255,0.1)', color: '#fff', border: 'none', cursor: 'pointer' }}
+                className="w-12 h-12 rounded-full flex items-center justify-center text-xl active:scale-95 transition-all backdrop-blur-sm"
+                style={{ background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.18)', cursor: 'pointer' }}
                 title="Flip camera"
               >
-                🔄
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M1 4V10H7" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M23 20V14H17" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M20.49 9C19.84 7.07 18.54 5.42 16.8 4.32C15.06 3.22 13 2.73 10.95 2.94C8.9 3.15 6.98 4.05 5.5 5.5L1 10M23 14L18.5 18.5C17.02 19.95 15.1 20.85 13.05 21.06C11 21.27 8.94 20.78 7.2 19.68C5.46 18.58 4.16 16.93 3.51 15" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
               </button>
 
               {/* Shutter — same SVG as canvas button */}

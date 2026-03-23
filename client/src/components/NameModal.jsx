@@ -56,6 +56,15 @@ export default function NameModal({ initial = '', onConfirm, onSkip }) {
 
       {/* Sheet */}
       <div className="relative w-full max-w-sm flex flex-col gap-5" style={sheetStyle}>
+        <button
+          onPointerDown={() => dismiss(() => onSkip?.())}
+          className="absolute flex items-center justify-center"
+          style={{ top: 16, right: 16, color: 'rgba(255,255,255,0.45)', cursor: 'pointer', background: 'none', border: 'none', padding: 4 }}
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 2L14 14M14 2L2 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+          </svg>
+        </button>
         <div style={{ textAlign: 'center' }}>
           <h2 style={{ color: '#fff', fontSize: 20, fontWeight: 400, margin: 0, letterSpacing: '-0.3px' }}>
             What's your name?

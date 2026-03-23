@@ -83,11 +83,14 @@ export default function PhotoCard({ card, isOwn, onDragEnd, onFocus, onDelete, z
           onPointerDown={handleDelete}
           className={`absolute -top-3 -right-3 z-10 w-7 h-7 rounded-full bg-white text-gray-800 text-sm flex items-center justify-center active:scale-90 transition-all
                      ${isTouchDevice ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 focus:opacity-100'}`}
-          style={{ touchAction: 'none', lineHeight: 1, boxShadow: '0 1px 4px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,0,0,0.08)' }}
+          style={{ touchAction: 'none', fontSize: 18, lineHeight: 1, cursor: 'pointer', boxShadow: '0 1px 4px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,0,0,0.08)' }}
           title="Remove photo"
           aria-label="Remove photo"
         >
-          ×
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <line x1="1" y1="1" x2="9" y2="9" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round"/>
+            <line x1="9" y1="1" x2="1" y2="9" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round"/>
+          </svg>
         </button>
       )}
 

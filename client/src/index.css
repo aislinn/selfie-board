@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+.pill-top {
+  top: max(16px, calc(env(safe-area-inset-top, 0px) + 8px));
+}
+@media (min-width: 640px) {
+  .pill-top {
+    top: auto;
+  }
+}
+
 .shutter-btn {
   transition: transform 0.08s ease-out;
   display: block;
