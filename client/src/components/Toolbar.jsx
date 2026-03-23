@@ -10,7 +10,7 @@ export default function Toolbar({ roomId, userName, onCameraOpen, onNameEdit, on
   return (
     <>
       {/* Standalone shutter button — bottom centre */}
-      <div className="absolute bottom-6 sm:bottom-10 left-1/2 -translate-x-1/2 z-40 drop-shadow-xl">
+      <div className="absolute bottom-6 sm:bottom-10 left-1/2 -translate-x-1/2 z-40" style={{ filter: 'drop-shadow(0 4px 24px rgba(0,0,0,0.6))' }}>
       <button
         onPointerDown={onCameraOpen}
         className="shutter-btn"
