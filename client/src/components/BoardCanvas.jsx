@@ -11,7 +11,7 @@ function throttle(fn, ms) {
 }
 
 const MIN_ZOOM = 0.25
-const MAX_ZOOM = ('ontouchstart' in window || navigator.maxTouchPoints > 0) ? 1.5 : 2
+const MAX_ZOOM = ('ontouchstart' in window || navigator.maxTouchPoints > 0) ? 1 : 2
 const CANVAS_SIZE = 5000  // fixed canvas square in px
 
 /**
