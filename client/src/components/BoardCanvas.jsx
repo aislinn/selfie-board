@@ -222,6 +222,7 @@ export default function BoardCanvas({
           overflow: 'hidden',
           background: 'radial-gradient(circle, rgba(61,68,96,0.9) 1px, transparent 1px)',
           backgroundSize: '28px 28px',
+          backgroundPosition: 'center',
           backgroundColor: '#1A1F2B',
         }}
       >
