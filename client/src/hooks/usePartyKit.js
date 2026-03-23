@@ -3,7 +3,7 @@ import PartySocket from 'partysocket'
 
 const PARTYKIT_HOST = import.meta.env.VITE_PARTYKIT_HOST ?? 'localhost:1999'
 
-export function usePartyKit({ roomId, onCardAdd, onCardMove, onCardRemove, onCursorMove, onInit }) {
+export function usePartyKit({ roomId, onCardAdd, onCardMove, onCardRemove, onCardRename, onCursorMove, onInit }) {
   const socketRef = useRef(null)
 
   useEffect(() => {
@@ -30,6 +30,9 @@ export function usePartyKit({ roomId, onCardAdd, onCardMove, onCardRemove, onCur
           break
         case 'card:remove':
           onCardRemove?.(msg.id)
+          break
+        case 'card:rename':
+          onCardRename?.(msg.ids, msg.name)
           break
         case 'cursor:move':
           onCursorMove?.(msg.clientId, msg.x, msg.y, msg.name)
@@ -65,9 +68,13 @@ export function usePartyKit({ roomId, onCardAdd, onCardMove, onCardRemove, onCur
     send({ type: 'card:remove', id })
   }, [send])
 
+  const emitCardRename = useCallback((ids, name) => {
+    send({ type: 'card:rename', ids, name })
+  }, [send])
+
   const emitCursorMove = useCallback((x, y, name) => {
     send({ type: 'cursor:move', x, y, name })
   }, [send])
 
-  return { emitCardAdd, emitCardMove, emitCardRemove, emitCursorMove }
+  return { emitCardAdd, emitCardMove, emitCardRemove, emitCardRename, emitCursorMove }
 }

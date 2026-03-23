@@ -17,6 +17,7 @@ type IncomingMessage =
   | { type: 'card:add'; card: Card }
   | { type: 'card:move'; id: string; x: number; y: number }
   | { type: 'card:remove'; id: string }
+  | { type: 'card:rename'; ids: string[]; name: string }
   | { type: 'cursor:move'; x: number; y: number; name: string | null }
 
 // ── Supabase REST helpers ────────────────────────────────────────────────────
@@ -63,6 +64,14 @@ async function updateCardPosition(supabaseUrl: string, serviceKey: string, id: s
   await dbFetch(supabaseUrl, serviceKey, `/cards?id=eq.${encodeURIComponent(id)}`, {
     method: 'PATCH',
     body: JSON.stringify({ x, y }),
+  })
+}
+
+async function updateCardName(supabaseUrl: string, serviceKey: string, id: string, name: string): Promise<void> {
+  if (!supabaseUrl || !serviceKey) return
+  await dbFetch(supabaseUrl, serviceKey, `/cards?id=eq.${encodeURIComponent(id)}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ name }),
   })
 }
 
@@ -154,6 +163,16 @@ export default class SelfieBoard implements Party.Server {
           .then(() => console.log('[card:remove] supabase delete ok'))
           .catch(err => console.error('[card:remove] supabase delete FAILED:', err.message))
         this.room.broadcast(JSON.stringify({ type: 'card:remove', id: msg.id }), [sender.id])
+        break
+      }
+
+      case 'card:rename': {
+        msg.ids.forEach(id => {
+          const idx = this.cards.findIndex(c => c.id === id)
+          if (idx !== -1) this.cards[idx] = { ...this.cards[idx], name: msg.name }
+          updateCardName(this.supabaseUrl, this.serviceKey, id, msg.name).catch(console.error)
+        })
+        this.room.broadcast(JSON.stringify({ type: 'card:rename', ids: msg.ids, name: msg.name }), [sender.id])
         break
       }
 

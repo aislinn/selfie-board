@@ -60,5 +60,15 @@ export function useBoard() {
     })
   }, [])
 
-  return { cards, addCard, moveCard, bringToFront, loadCards, removeCard }
+  const renameCards = useCallback((ids, name) => {
+    setCards(prev => {
+      const next = new Map(prev)
+      ids.forEach(id => {
+        if (next.has(id)) next.set(id, { ...next.get(id), name })
+      })
+      return next
+    })
+  }, [])
+
+  return { cards, addCard, moveCard, bringToFront, loadCards, removeCard, renameCards }
 }

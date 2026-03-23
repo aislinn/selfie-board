@@ -41,7 +41,7 @@ export default function NameModal({ initial = '', onConfirm, onSkip }) {
   const sheetStyle = {
     background: '#1A1F2B',
     borderRadius: 24,
-    padding: '28px 24px 24px',
+    padding: '24px 24px 32px',
     boxShadow: '0 -4px 60px rgba(0,0,0,0.5)',
     border: '1px solid rgba(255,255,255,0.08)',
     opacity: visible ? 1 : 0,

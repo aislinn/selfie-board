@@ -46,7 +46,8 @@ export default function Board() {
   const boardRef = useRef(null)
   const panOffsetRef = useRef({ x: 0, y: 0, zoom: 1 })
 
-  const { cards, addCard, moveCard, bringToFront, loadCards, removeCard } = useBoard()
+  const { cards, addCard, moveCard, bringToFront, loadCards, removeCard, renameCards } = useBoard()
+  const sessionCardIdsRef = useRef([])
 
   // ── PartyKit handlers ────────────────────────────────────────────────────
   const handleInit = useCallback((serverCards) => {
@@ -65,6 +66,10 @@ export default function Board() {
     removeCard(id)
   }, [removeCard])
 
+  const handleRemoteCardRename = useCallback((ids, name) => {
+    renameCards(ids, name)
+  }, [renameCards])
+
   const handleCursorMove = useCallback((clientId, x, y, name) => {
     setRemoteCursors(prev => {
       const next = new Map(prev)
@@ -73,12 +78,13 @@ export default function Board() {
     })
   }, [])
 
-  const { emitCardAdd, emitCardMove, emitCardRemove, emitCursorMove } = usePartyKit({
+  const { emitCardAdd, emitCardMove, emitCardRemove, emitCardRename, emitCursorMove } = usePartyKit({
     roomId,
     onInit: handleInit,
     onCardAdd: handleRemoteCardAdd,
     onCardMove: handleRemoteCardMove,
     onCardRemove: handleRemoteCardRemove,
+    onCardRename: handleRemoteCardRename,
     onCursorMove: handleCursorMove,
   })
 
@@ -87,6 +93,10 @@ export default function Board() {
     setUserName(name)
     safeLocalStorageSet(NAME_KEY, name)
     setNameModalOpen(false)
+    if (sessionCardIdsRef.current.length > 0) {
+      renameCards(sessionCardIdsRef.current, name)
+      emitCardRename(sessionCardIdsRef.current, name)
+    }
   }
 
   // ── Camera capture → upload → add card ──────────────────────────────────
@@ -114,6 +124,7 @@ export default function Board() {
         created_at: new Date().toISOString(),
       }
 
+      sessionCardIdsRef.current = [...sessionCardIdsRef.current, cardId]
       addCard(card)
       emitCardAdd(card)
     } finally {
