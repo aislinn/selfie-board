@@ -70,7 +70,7 @@ export default function NameModal({ initial = '', onConfirm, onSkip }) {
             What's your name?
           </h2>
           <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 14, margin: '4px 0 0' }}>
-            It'll appear on your selfie cards
+            This will be shown on your selfies
           </p>
         </div>
 
@@ -90,7 +90,7 @@ export default function NameModal({ initial = '', onConfirm, onSkip }) {
               border: '1px solid rgba(255,255,255,0.12)',
               background: 'rgba(255,255,255,0.07)',
               color: '#fff',
-              fontSize: 16,
+              fontSize: 15,
               outline: 'none',
               boxSizing: 'border-box',
             }}

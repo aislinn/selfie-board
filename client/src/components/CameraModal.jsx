@@ -123,12 +123,13 @@ export default function CameraModal({ onCapture, onClose }) {
 
         {/* Controls — pb-10 keeps shutter button at same position as canvas button */}
         <div
-          className="flex items-center justify-around px-6 pt-5 pb-6"
-          style={{}}
+          className="flex items-center px-6"
+          style={{ height: 116 }}
         >
           {!preview ? (
-            <>
-              {/* Flip camera */}
+            <div className="grid grid-cols-3 items-center w-full">
+              {/* Flip camera — centred in left third */}
+              <div className="flex justify-center">
               <button
                 onPointerDown={flipCamera}
                 className="w-12 h-12 rounded-full flex items-center justify-center text-xl active:scale-95 transition-all backdrop-blur-sm"
@@ -141,38 +142,41 @@ export default function CameraModal({ onCapture, onClose }) {
                   <path d="M20.49 9C19.84 7.07 18.54 5.42 16.8 4.32C15.06 3.22 13 2.73 10.95 2.94C8.9 3.15 6.98 4.05 5.5 5.5L1 10M23 14L18.5 18.5C17.02 19.95 15.1 20.85 13.05 21.06C11 21.27 8.94 20.78 7.2 19.68C5.46 18.58 4.16 16.93 3.51 15" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </button>
+              </div>
 
-              {/* Shutter — same SVG as canvas button */}
-              <button
-                onPointerDown={handleSnap}
-                disabled={!isStreaming}
-                className="shutter-btn"
-                title="Take photo"
-                aria-label="Take photo"
-              >
-                <svg width="72" height="72" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M90 0C139.706 0 180 40.2944 180 90C180 139.706 139.706 180 90 180C40.2944 180 0 139.706 0 90C0 40.2944 40.2944 0 90 0ZM90 10C45.8172 10 10 45.8172 10 90C10 134.183 45.8172 170 90 170C134.183 170 170 134.183 170 90C170 45.8172 134.183 10 90 10Z" fill="white"/>
-                  <circle cx="90" cy="90" r="71" fill="white"/>
-                </svg>
-              </button>
+              {/* Shutter — centred in middle third */}
+              <div className="flex justify-center">
+                <button
+                  onPointerDown={handleSnap}
+                  disabled={!isStreaming}
+                  className="shutter-btn"
+                  title="Take photo"
+                  aria-label="Take photo"
+                >
+                  <svg width="72" height="72" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M90 0C139.706 0 180 40.2944 180 90C180 139.706 139.706 180 90 180C40.2944 180 0 139.706 0 90C0 40.2944 40.2944 0 90 0ZM90 10C45.8172 10 10 45.8172 10 90C10 134.183 45.8172 170 90 170C134.183 170 170 134.183 170 90C170 45.8172 134.183 10 90 10Z" fill="white"/>
+                    <circle cx="90" cy="90" r="71" fill="white"/>
+                  </svg>
+                </button>
+              </div>
 
-              {/* Spacer */}
-              <div className="w-12 h-12" />
-            </>
+              {/* Empty right third */}
+              <div />
+            </div>
           ) : (
-            <>
+            <div className="flex gap-3 w-full">
               {/* Retake */}
               <button
                 onPointerDown={handleRetake}
-                className="active:scale-95 transition-all"
+                className="flex-1 active:scale-95 transition-all backdrop-blur-sm"
                 style={{
-                  padding: '14px 20px',
+                  height: 44,
                   borderRadius: 14,
-                  border: 'none',
-                  background: 'rgba(255,255,255,0.1)',
+                  border: '1px solid rgba(255,255,255,0.18)',
+                  background: 'rgba(255,255,255,0.12)',
                   color: 'rgba(255,255,255,0.7)',
                   fontSize: 15,
-                  fontWeight: 600,
+                  fontWeight: 400,
                   cursor: 'pointer',
                   letterSpacing: '-0.2px',
                 }}
@@ -183,22 +187,22 @@ export default function CameraModal({ onCapture, onClose }) {
               {/* Use photo */}
               <button
                 onPointerDown={handleConfirm}
-                className="active:scale-95 transition-all"
+                className="flex-1 active:scale-95 transition-all"
                 style={{
-                  padding: '14px 20px',
+                  height: 44,
                   borderRadius: 14,
                   border: 'none',
                   background: '#fff',
                   color: '#111',
                   fontSize: 15,
-                  fontWeight: 600,
+                  fontWeight: 400,
                   cursor: 'pointer',
                   letterSpacing: '-0.2px',
                 }}
               >
-                Use photo ✓
+                Use photo
               </button>
-            </>
+            </div>
           )}
         </div>
       </div>

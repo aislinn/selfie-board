@@ -32,7 +32,7 @@ export default function Toolbar({ roomId, userName, onCameraOpen, onNameEdit, on
           title="Edit your name"
         >
           <span className="mr-1">Posting as</span>
-          <span className="max-w-[80px] truncate font-semibold">{userName || 'Add name'}</span>
+          <span className="max-w-[80px] truncate font-semibold">{userName || 'Anonymous'}</span>
         </button>
       </div>
     </>
