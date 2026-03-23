@@ -12,7 +12,12 @@ export default function Home() {
   return (
     <div
       className="min-h-screen flex flex-col items-center justify-center p-6"
-      style={{ background: '#1A1F2B' }}
+      style={{
+        background: '#1A1F2B',
+        backgroundImage: 'radial-gradient(circle, rgba(61,68,96,0.5) 1px, transparent 1px)',
+        backgroundSize: '28px 28px',
+        backgroundPosition: 'center center',
+      }}
     >
       {/* Logo / hero */}
       <div className="text-center space-y-4 mb-6" style={{ fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}>

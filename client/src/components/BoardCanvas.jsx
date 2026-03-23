@@ -226,18 +226,6 @@ export default function BoardCanvas({
           backgroundColor: '#1A1F2B',
         }}
       >
-        {/* Centre marker */}
-        <div style={{
-          position: 'absolute',
-          left: CANVAS_SIZE / 2,
-          top: CANVAS_SIZE / 2,
-          width: 16,
-          height: 16,
-          borderRadius: '50%',
-          background: 'hotpink',
-          transform: 'translate(-50%, -50%)',
-          pointerEvents: 'none',
-        }} />
 
         {[...cards.values()].map(card => (
           <PhotoCard
