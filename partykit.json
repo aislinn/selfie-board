@@ -4,7 +4,6 @@
   "main": "party/index.ts",
   "compatibilityDate": "2024-11-01",
   "vars": {
-    "SUPABASE_URL": "https://jpfvwnzcutgxpbhrgrfk.supabase.co",
-    "SUPABASE_SERVICE_KEY": "***REMOVED***"
+    "SUPABASE_URL": "https://jpfvwnzcutgxpbhrgrfk.supabase.co"
   }
 }
